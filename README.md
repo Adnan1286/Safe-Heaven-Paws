@@ -70,7 +70,7 @@ git clone https://github.com/Adnan1286/Safe-Heaven-Paws.git
    Navigate to the frontend directory and install dependencies:
 
    ```bash
-   cd frontend
+   cd client
    npm install
    ```
 
@@ -79,7 +79,7 @@ git clone https://github.com/Adnan1286/Safe-Heaven-Paws.git
    Navigate to the backend directory and install dependencies:
 
    ```bash
-   cd backend
+   cd ..
    npm install
    ```
 
@@ -106,17 +106,18 @@ git clone https://github.com/Adnan1286/Safe-Heaven-Paws.git
    npm start
    ```
 
-   The backend will be running on [http://localhost:5000](http://localhost:5000).
+   The backend will be running on [http://localhost:8080](http://localhost:8080).
 
 2. **Run the Frontend:**
 
    In the frontend directory, run:
 
    ```bash
-   npm start
+   cd client
+   npm run dev
    ```
 
-   The frontend will be running on [http://localhost:3000](http://localhost:3000).
+   The frontend will be running on [http://localhost:5173](http://localhost:5173).
 
 ---
 

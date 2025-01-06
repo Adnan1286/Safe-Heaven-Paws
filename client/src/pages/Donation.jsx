@@ -77,6 +77,15 @@ const Donation = () => {
     }
   }, []);
 
+  // Background color for the page
+  useEffect(() => {
+    document.body.style.backgroundColor = '#e6f7ff';
+    return () => {
+      document.body.style.backgroundColor = '';
+    };
+  }, []);
+  //
+
   const handleDonate = async () => {
     try {
       // Check if all fields are filled
@@ -94,14 +103,26 @@ const Donation = () => {
         return message.error('CVV must contain only numbers');
       }
       
-      // If validation passes, process donation
-      setDonationAmount(prev => prev + Number(cardDetails.amount));
-      message.success('Donation successful!');
-      setShowDonateForm(false);
-      setCardDetails({ cardNumber: '', expiryDate: '', cvv: '', amount: '' });
+      // Send donation to backend
+      const res = await axios.post(
+        "http://localhost:8080/api/v1/donation/donate",
+        { amount: Number(cardDetails.amount) },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      
+      if (res.data.success) {
+        setDonationAmount(res.data.newBalance);
+        message.success('Donation successful!');
+        setShowDonateForm(false);
+        setCardDetails({ cardNumber: '', expiryDate: '', cvv: '', amount: '' });
+      }
     } catch (error) {
       console.log(error);
-      message.error('Error processing donation');
+      message.error(error.response?.data?.message || 'Error processing donation');
     }
   };
 
@@ -269,6 +290,7 @@ const styles = {
     margin: '0 auto',
     marginTop: '70px',
     backgroundColor: '#f5f5f5',
+    minHeight: '100vh',
   },
   title: {
     textAlign: 'center',

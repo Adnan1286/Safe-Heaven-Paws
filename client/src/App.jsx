@@ -9,6 +9,9 @@ import Vet from './pages/Vet';
 import Event from './pages/Event';
 import Profile from './pages/Profile';
 import Blog from './pages/Blog';
+import LostFound from './pages/LostFound';
+import ProtectedRoute from './components/ProtectedRoute';
+import Settings from './pages/Settings';
 
 function App() {
   return (
@@ -24,6 +27,22 @@ function App() {
         <Route path="/event" element={<Event />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/blog" element={<Blog />} />
+        <Route 
+          path="/lost-found" 
+          element={
+            <ProtectedRoute>
+              <LostFound />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/settings" 
+          element={
+            <ProtectedRoute>
+              <Settings />
+            </ProtectedRoute>
+          } 
+        />
       </Routes>
     </BrowserRouter>
   );

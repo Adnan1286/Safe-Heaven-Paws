@@ -1,8 +1,21 @@
 const express = require('express');
-const { getEvents, createEvent } = require('../controllers/eventController');
+const authMiddleware = require("../middlewares/authMiddleware");
+const { 
+    createEvent, 
+    getAllEvents, 
+    getAllEventsAdmin,
+    approveEvent,
+    rejectEvent 
+} = require("../controllers/eventCtrl");
 const router = express.Router();
 
-router.get('/', getEvents); // Fetch all events
-router.post('/create', createEvent); // Create a new event
+// Public route to get approved events
+router.get("/", getAllEvents);
+
+// Protected routes
+router.post("/create", authMiddleware, createEvent);
+router.get("/admin", authMiddleware, getAllEventsAdmin);
+router.post("/approve/:id", authMiddleware, approveEvent);
+router.post("/reject/:id", authMiddleware, rejectEvent);
 
 module.exports = router;

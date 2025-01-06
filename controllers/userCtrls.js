@@ -77,4 +77,73 @@ const authController = async(req,res) => {
         res.status(500).send({message:"Auth Failed",success:false});
     }
 }
-module.exports = {loginController, registerController, authController};
+
+const getUserProfileController = async (req, res) => {
+    try {
+        const user = await userModel.findById(req.body.userId).select('-password');
+        res.status(200).send({
+            success: true,
+            data: user
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            success: false,
+            message: 'Error fetching user profile'
+        });
+    }
+};
+
+const updateUserProfileController = async (req, res) => {
+    try {
+        const user = await userModel.findById(req.body.userId);
+        if (!user) {
+            return res.status(404).send({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        // Verify current password if provided
+        if (req.body.currentPassword) {
+            const isMatch = await bcrypt.compare(req.body.currentPassword, user.password);
+            if (!isMatch) {
+                return res.status(400).send({
+                    success: false,
+                    message: 'Current password is incorrect'
+                });
+            }
+        }
+
+        // Update user data
+        user.name = req.body.name || user.name;
+        user.email = req.body.email || user.email;
+
+        // Update password if new password is provided
+        if (req.body.newPassword) {
+            const salt = await bcrypt.genSalt(10);
+            user.password = await bcrypt.hash(req.body.newPassword, salt);
+        }
+
+        await user.save();
+
+        res.status(200).send({
+            success: true,
+            message: 'Profile updated successfully'
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            success: false,
+            message: 'Error updating profile'
+        });
+    }
+};
+
+module.exports = {
+    loginController,
+    registerController,
+    authController,
+    getUserProfileController,
+    updateUserProfileController
+};

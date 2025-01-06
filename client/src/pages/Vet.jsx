@@ -107,13 +107,13 @@ const Vet = () => {
         <div style={styles.header}>
           <h1 style={styles.title}>Veterinarians 👨‍⚕️</h1>
           <button style={styles.requestButton} onClick={handleOpenModal}>
-            Request to Add a Vet
+            Request to Add a Vet 😷
           </button>
         </div>
         <div style={styles.filterContainer}>
           <input
             type="text"
-            placeholder="Filter by location"
+            placeholder="⏳ Filter by location"
             value={filter}
             onChange={handleFilterChange}
             style={styles.input}

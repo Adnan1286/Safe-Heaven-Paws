@@ -19,9 +19,8 @@ exports.getBlogs = async (req, res) => {
 exports.createBlog = async (req, res) => {
   try {
     console.log('Received blog data:', req.body);
-    console.log('User data:', req.user);
 
-    const { title, content } = req.body;
+    const { title, content, authorName } = req.body;
     
     if (!title || !content) {
       return res.status(400).json({ 
@@ -33,7 +32,7 @@ exports.createBlog = async (req, res) => {
     const blogData = {
       title,
       content,
-      authorName: req.user.name || req.user.username,
+      authorName: authorName || 'Anonymous',
       createdAt: new Date()
     };
 
@@ -49,11 +48,10 @@ exports.createBlog = async (req, res) => {
       data: savedBlog
     });
   } catch (error) {
-    console.error('Detailed error:', error);
+    console.error('Detailed error in createBlog:', error);
     res.status(500).json({ 
       success: false,
-      message: 'Failed to create blog',
-      error: error.message 
+      message: error.message || 'Failed to create blog'
     });
   }
 }; 

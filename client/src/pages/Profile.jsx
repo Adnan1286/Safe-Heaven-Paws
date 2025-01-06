@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
+  const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -35,12 +37,21 @@ const Profile = () => {
     fetchUserData();
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
+
   if (loading) return <div style={styles.loading}>Loading...</div>;
   if (error) return <div style={styles.error}>{error}</div>;
 
   return (
     <div style={styles.container}>
-      <Navbar userName={userData?.name} userRole={userData?.role || "User"} />
+      <Navbar 
+        userName={userData?.name} 
+        userRole={userData?.role || "User"} 
+        onLogout={handleLogout}
+      />
       <main style={styles.main}>
         <div style={styles.profileCard}>
           <h1 style={styles.title}>Profile</h1>

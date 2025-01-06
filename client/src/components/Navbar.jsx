@@ -14,11 +14,11 @@ const Navbar = ({ userName, onLogout, userRole }) => {
       <div style={styles.links}>
         <Link to="/event" style={styles.link}>Event</Link>
         <Link to="/vet" style={styles.link}>Vet</Link>
-        <Link to="/pet-rescue" style={styles.link}>Pet Rescue</Link>
-        <Link to="/lost-found" style={styles.link}>Lost&Found</Link>
         <Link to="/blog" style={styles.link}>Blog</Link>
         <Link to="/donation" style={styles.link}>Donation</Link>
-        <Link to="/profile" style={styles.link}>Profile</Link>
+        <Link to="/pet-rescue" style={styles.link}>Pet Rescue</Link>
+        <Link to="/lost-found" style={styles.link}>Lost&Found</Link>
+        {/* <Link to="/profile" style={styles.link}>Profile</Link> */}
         
         <div style={styles.profileSection}>
           <Link to="/profile" style={styles.link}>
@@ -33,18 +33,15 @@ const Navbar = ({ userName, onLogout, userRole }) => {
           
           {showDropdown && (
             <div style={styles.dropdown}>
-              <Link to="/settings" style={styles.dropdownItem}>Settings</Link>
-              <Link to="/favorites" style={styles.dropdownItem}>Favorites</Link>
+              <Link to="/settings" style={styles.dropdownItem}>⚙️ Settings</Link>
+              {/* <Link to="/favorites" style={styles.dropdownItem}>Favorites</Link> */}
               {isAdmin && (
                 <>
                   <Link to="/admin/event-approval" style={styles.dropdownItem}>
                     Event Approval
                   </Link>
-                  <Link to="/admin/blog-approval" style={styles.dropdownItem}>
-                    Blog Approval
-                  </Link>
                   <Link to="/admin/donation-approval" style={styles.dropdownItem}>
-                    donation Approval
+                    Donation Approval
                   </Link>
                 </>
               )}

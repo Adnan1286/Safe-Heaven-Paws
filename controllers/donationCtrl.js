@@ -1,7 +1,15 @@
+const DonationBalance = require("../models/donationBalanceModel");
 const donationRequestModel = require("../models/donationRequestModel");
 
-// Initial donation balance
-let donationBalance = 2000;
+// Initialize or get donation balance
+const initializeDonationBalance = async () => {
+    let balance = await DonationBalance.findOne();
+    if (!balance) {
+        balance = new DonationBalance();
+        await balance.save();
+    }
+    return balance;
+};
 
 // Submit new donation request
 const submitRequest = async (req, res) => {
@@ -91,21 +99,36 @@ const approveRequest = async (req, res) => {
             });
         }
 
-        if (donationBalance < request.amountNeeded) {
+        const balance = await initializeDonationBalance();
+        
+        if (balance.totalBalance < request.amountNeeded) {
             return res.status(400).send({
                 success: false,
                 message: "Insufficient donation balance"
             });
         }
 
+        // Add withdrawal transaction
+        balance.transactions.push({
+            type: 'withdrawal',
+            amount: request.amountNeeded,
+            userId: request.userId,
+            requestId: request._id,
+            description: `Approved donation request: ${request.reason}`
+        });
+
+        // Update balance
+        balance.totalBalance -= request.amountNeeded;
+        await balance.save();
+
+        // Update request status
         request.status = 'approved';
         await request.save();
-        donationBalance -= request.amountNeeded;
 
         res.status(200).send({
             success: true,
             message: "Request approved successfully",
-            newBalance: donationBalance
+            newBalance: balance.totalBalance
         });
     } catch (error) {
         console.log(error);
@@ -143,9 +166,10 @@ const rejectRequest = async (req, res) => {
 // Get donation balance
 const getDonationBalance = async (req, res) => {
     try {
+        const balance = await initializeDonationBalance();
         res.status(200).send({
             success: true,
-            balance: donationBalance
+            balance: balance.totalBalance
         });
     } catch (error) {
         console.log(error);
@@ -157,11 +181,74 @@ const getDonationBalance = async (req, res) => {
     }
 };
 
+// Add donation
+const addDonation = async (req, res) => {
+    try {
+        const { amount } = req.body;
+        if (!amount || amount <= 0) {
+            return res.status(400).send({
+                success: false,
+                message: "Invalid donation amount"
+            });
+        }
+
+        const balance = await initializeDonationBalance();
+        
+        // Add transaction and update balance
+        balance.transactions.push({
+            type: 'donation',
+            amount: amount,
+            userId: req.body.userId,
+            description: 'User donation'
+        });
+        
+        balance.totalBalance += Number(amount);
+        await balance.save();
+
+        res.status(200).send({
+            success: true,
+            message: "Donation added successfully",
+            newBalance: balance.totalBalance
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            success: false,
+            message: "Error processing donation",
+            error
+        });
+    }
+};
+
+// Get transaction history
+const getTransactionHistory = async (req, res) => {
+    try {
+        const balance = await initializeDonationBalance();
+        const transactions = await DonationBalance.findOne()
+            .populate('transactions.userId', 'name')
+            .populate('transactions.requestId', 'reason');
+
+        res.status(200).send({
+            success: true,
+            transactions: transactions.transactions.sort((a, b) => b.timestamp - a.timestamp)
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            success: false,
+            message: "Error getting transaction history",
+            error
+        });
+    }
+};
+
 module.exports = {
     submitRequest,
     getAllRequests,
     getUserRequests,
     approveRequest,
     rejectRequest,
-    getDonationBalance
+    getDonationBalance,
+    addDonation,
+    getTransactionHistory
 }; 

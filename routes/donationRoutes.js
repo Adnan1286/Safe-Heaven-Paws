@@ -7,7 +7,8 @@ const {
     getUserRequests,
     approveRequest,
     rejectRequest,
-    getDonationBalance
+    getDonationBalance,
+    addDonation
 } = require("../controllers/donationCtrl");
 
 // Routes
@@ -17,5 +18,6 @@ router.get("/user-requests", authMiddleware, getUserRequests);
 router.post("/approve/:id", authMiddleware, approveRequest);
 router.post("/reject/:id", authMiddleware, rejectRequest);
 router.get("/balance", getDonationBalance);
+router.post("/donate", authMiddleware, addDonation);
 
 module.exports = router; 

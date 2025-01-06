@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Blog = () => {
+  const navigate = useNavigate();
   const [blogs, setBlogs] = useState([]);
   const [formData, setFormData] = useState({
     title: '',
@@ -58,31 +60,29 @@ const Blog = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log('Submitting blog data:', formData);
+      const blogData = {
+        ...formData,
+        authorName: userData?.name || 'Anonymous'
+      };
 
       const response = await axios.post(
         'http://localhost:8080/api/v1/blogs/create',
-        formData,
+        blogData,
         {
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
+            'Content-Type': 'application/json'
           },
         }
       );
       
-      console.log('Server response:', response.data);
-
       if (response.data.success) {
         setBlogs([response.data.data, ...blogs]);
         window.alert('Blog posted successfully!');
         setIsModalOpen(false);
         setFormData({ title: '', content: '' });
-      } else {
-        throw new Error(response.data.message || 'Failed to create blog');
       }
     } catch (error) {
-      console.error('Full error object:', error);
+      console.error('Error creating blog:', error);
       const errorMessage = error.response?.data?.message || error.message || 'An unknown error occurred';
       window.alert('Failed to post blog: ' + errorMessage);
     }
@@ -96,9 +96,18 @@ const Blog = () => {
     });
   };
 
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
+
   return (
     <div style={styles.container}>
-      <Navbar userName={userData?.name} userRole={userData?.role} />
+      <Navbar 
+        userName={userData?.name} 
+        onLogout={handleLogout}
+        userRole={userData?.role} 
+      />
       <main style={styles.main}>
         <div style={styles.header}>
           <h1 style={styles.title}>Blog Posts 📝</h1>

@@ -19,7 +19,7 @@ const Event = () => {
     const fetchEvents = async () => {
       try {
         const response = await axios.get('http://localhost:8080/api/v1/events');
-        setEvents(response.data);
+        setEvents(response.data.data);
       } catch (error) {
         console.error('Error fetching events:', error);
       }
@@ -106,12 +106,16 @@ const Event = () => {
       description: '',
     });
   };
-
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
   return (
     <div style={styles.container}>
       <Navbar
         userName={userData?.name} // Pass the username to Navbar
         userRole={userData?.role} // Optionally pass the role
+        onLogout={handleLogout}
       />
       <main style={styles.main}>
         <div style={styles.header}>

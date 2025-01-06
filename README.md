@@ -89,9 +89,11 @@ git clone https://github.com/Adnan1286/Safe-Heaven-Paws.git
 2. Add the following environment variables:
 
    ```
-   MONGO_URI=your_mongodb_connection_string
-   JWT_SECRET=your_jwt_secret_key
-   PORT=5000
+   PORT=8080
+   NODE_MODE = development
+   MONGO_URI= mongodb+srv://safayet:123@cluster0.7d5ke.mongodb.net/practice
+   JWT_SECRET=JWT_SECRET
+   
    ```
 
 3. Replace `your_mongodb_connection_string` with your actual MongoDB URI and `your_jwt_secret_key` with a secret key for JWT.
